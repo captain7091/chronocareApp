@@ -1,0 +1,1 @@
+// Vital data model will be defined here. 
