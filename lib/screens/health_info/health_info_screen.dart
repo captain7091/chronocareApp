@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../main_screen.dart';
 
 class HealthInfoScreen extends StatefulWidget {
   const HealthInfoScreen({Key? key}) : super(key: key);
@@ -150,7 +151,10 @@ class _HealthInfoScreenState extends State<HealthInfoScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Save & Update logic here
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (_) => const MainScreen()),
+                      (route) => false,
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF0A4DA2),

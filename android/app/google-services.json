@@ -4,6 +4,7 @@
     "project_id": "chronocare-8643b",
     "storage_bucket": "chronocare-8643b.firebasestorage.app"
   },
+  
   "client": [
     {
       "client_info": {
