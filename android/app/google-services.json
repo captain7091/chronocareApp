@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "581542591557",
+    "project_id": "chronocare-8643b",
+    "storage_bucket": "chronocare-8643b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:581542591557:android:c45e8bec4820245a05372c",
+        "android_client_info": {
+          "package_name": "com.example.chronocare_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCN6gg2lT2LgydcuYRp5XbALFlHkEF2vnI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
