@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'home/home_screen.dart';
+import 'chatbot_screen.dart';
+import 'medication_screen.dart';
+import 'tracker_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -13,9 +16,9 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     HomeScreen(),
-    Center(child: Text('Chatbot', style: TextStyle(fontSize: 24))),
-    Center(child: Text('Medication', style: TextStyle(fontSize: 24))),
-    Center(child: Text('Tracker', style: TextStyle(fontSize: 24))),
+    ChatbotScreen(),
+    MedicationScreen(),
+    TrackerScreen(),
     Center(child: Text('Setting', style: TextStyle(fontSize: 24))),
   ];
 
