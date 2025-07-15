@@ -1,22 +1,20 @@
+import 'package:chronocare_app/core/services/auth_gate.dart';
 import 'package:flutter/material.dart';
-import 'screens/splash/splash_screen.dart';
+import 'package:chronocare_app/screens/splash/splash_screen.dart';
 
 class ChronoCareApp extends StatelessWidget {
-  const ChronoCareApp({Key? key}) : super(key: key);
+  const ChronoCareApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'ChronoCare',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         brightness: Brightness.light,
       ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-      ),
       home: const SplashScreen(),
-      debugShowCheckedModeBanner: false,
     );
   }
 } 

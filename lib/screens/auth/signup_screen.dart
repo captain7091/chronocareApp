@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../health_info/health_info_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -13,6 +14,71 @@ class _SignupScreenState extends State<SignupScreen> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _agreeTerms = false;
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _fullNameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _register() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    final confirmPassword = _confirmPasswordController.text.trim();
+    final fullName = _fullNameController.text.trim();
+    if (fullName.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = 'Please fill all fields.';
+      });
+      return;
+    }
+    if (password != confirmPassword) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = 'Passwords do not match.';
+      });
+      return;
+    }
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+      // Optionally, update display name
+      await FirebaseAuth.instance.currentUser?.updateDisplayName(fullName);
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => const HealthInfoScreen(),
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        _errorMessage = e.message;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Registration failed. Please try again.';
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,11 +121,12 @@ class _SignupScreenState extends State<SignupScreen> {
                 const Text('Full Name', style: TextStyle(fontWeight: FontWeight.w500)),
                 const SizedBox(height: 8),
                 TextField(
+                  controller: _fullNameController,
                   decoration: InputDecoration(
                     hintText: 'Enter your full name',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(color: Colors.black12),
+                      borderSide: const BorderSide(color: Colors.black12),
                     ),
                     filled: true,
                     fillColor: Colors.white,
@@ -70,11 +137,12 @@ class _SignupScreenState extends State<SignupScreen> {
                 const Text('Email Address', style: TextStyle(fontWeight: FontWeight.w500)),
                 const SizedBox(height: 8),
                 TextField(
+                  controller: _emailController,
                   decoration: InputDecoration(
                     hintText: 'Enter your email',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(color: Colors.black12),
+                      borderSide: const BorderSide(color: Colors.black12),
                     ),
                     filled: true,
                     fillColor: Colors.white,
@@ -85,12 +153,13 @@ class _SignupScreenState extends State<SignupScreen> {
                 const Text('Password', style: TextStyle(fontWeight: FontWeight.w500)),
                 const SizedBox(height: 8),
                 TextField(
+                  controller: _passwordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
                     hintText: 'Enter your password',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(color: Colors.black12),
+                      borderSide: const BorderSide(color: Colors.black12),
                     ),
                     filled: true,
                     fillColor: Colors.white,
@@ -109,12 +178,13 @@ class _SignupScreenState extends State<SignupScreen> {
                 const Text('Confirm Password', style: TextStyle(fontWeight: FontWeight.w500)),
                 const SizedBox(height: 8),
                 TextField(
+                  controller: _confirmPasswordController,
                   obscureText: _obscureConfirmPassword,
                   decoration: InputDecoration(
                     hintText: 'Enter your password',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(color: Colors.black12),
+                      borderSide: const BorderSide(color: Colors.black12),
                     ),
                     filled: true,
                     fillColor: Colors.white,
@@ -165,17 +235,19 @@ class _SignupScreenState extends State<SignupScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
+                if (_errorMessage != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Text(
+                      _errorMessage!,
+                      style: const TextStyle(color: Colors.red, fontSize: 14),
+                    ),
+                  ),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _agreeTerms
-                        ? () {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (_) => const HealthInfoScreen(),
-                              ),
-                            );
-                          }
+                    onPressed: _agreeTerms && !_isLoading
+                        ? _register
                         : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF0A4DA2),
@@ -184,7 +256,16 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                    child: const Text('Register', style: TextStyle(fontSize: 18, color: Colors.white)),
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Text('Register', style: TextStyle(fontSize: 18, color: Colors.white)),
                   ),
                 ),
                 const SizedBox(height: 16),

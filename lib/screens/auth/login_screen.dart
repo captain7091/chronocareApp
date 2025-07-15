@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'signup_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -10,6 +11,45 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loginUser() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+      // Login success: Navigate to home or main screen
+      Navigator.pushReplacementNamed(context, '/home'); // Change '/home' to your actual home route
+    } on FirebaseAuthException catch (e) {
+      String message = 'Login failed';
+      if (e.code == 'user-not-found') {
+        message = 'User not found. Please register first.';
+      } else if (e.code == 'wrong-password') {
+        message = 'Incorrect password.';
+      }
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Login Error'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const Text('Email Address', style: TextStyle(fontWeight: FontWeight.w500)),
                 const SizedBox(height: 8),
                 TextField(
+                  controller: _emailController,
                   decoration: InputDecoration(
                     hintText: 'Enter your email',
                     border: OutlineInputBorder(
@@ -67,6 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const Text('Password', style: TextStyle(fontWeight: FontWeight.w500)),
                 const SizedBox(height: 8),
                 TextField(
+                  controller: _passwordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
                     hintText: 'Enter your password',
@@ -99,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: _loginUser,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF0A4DA2),
                       shape: RoundedRectangleBorder(

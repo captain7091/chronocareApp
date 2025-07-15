@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'home/home_screen.dart';
 import 'chatbot_screen.dart';
@@ -19,7 +20,15 @@ class _MainScreenState extends State<MainScreen> {
     ChatbotScreen(),
     MedicationScreen(),
     TrackerScreen(),
-    Center(child: Text('Setting', style: TextStyle(fontSize: 24))),
+    // Setting Screen with Logout Button
+    Center(
+      child: ElevatedButton(
+        onPressed: () async {
+          await FirebaseAuth.instance.signOut();
+        },
+        child: const Text('Logout'),
+      ),
+    ),
   ];
 
   @override
