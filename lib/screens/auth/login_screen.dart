@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:chronocare_app/screens/main_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:chronocare_app/providers/auth_provider.dart' as my_auth;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -27,6 +29,11 @@ class _LoginScreenState extends State<LoginScreen> {
     final password = _passwordController.text.trim();
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+      // Update AuthProvider after login
+      final user = FirebaseAuth.instance.currentUser;
+      if (mounted) {
+        Provider.of<my_auth.AuthProvider>(context, listen: false).setUser(user);
+      }
       // Login success: Show popup and navigate to home/main screen
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

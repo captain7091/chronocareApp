@@ -1,7 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class AddManualDataScreen extends StatelessWidget {
+class AddManualDataScreen extends StatefulWidget {
   const AddManualDataScreen({Key? key}) : super(key: key);
+
+  @override
+  State<AddManualDataScreen> createState() => _AddManualDataScreenState();
+}
+
+class _AddManualDataScreenState extends State<AddManualDataScreen> {
+  final _systolicController = TextEditingController();
+  final _diastolicController = TextEditingController();
+  final _pulseController = TextEditingController();
+  final _noteController = TextEditingController();
+  bool _isSaving = false;
+
+  @override
+  void dispose() {
+    _systolicController.dispose();
+    _diastolicController.dispose();
+    _pulseController.dispose();
+    _noteController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _saveData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final systolic = int.tryParse(_systolicController.text.trim());
+    final diastolic = int.tryParse(_diastolicController.text.trim());
+    final pulse = int.tryParse(_pulseController.text.trim());
+    final note = _noteController.text.trim();
+    if (systolic == null || diastolic == null || pulse == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter valid numbers for all fields.'), backgroundColor: Colors.red),
+      );
+      return;
+    }
+    setState(() { _isSaving = true; });
+    await FirebaseFirestore.instance.collection('bp_tracker').add({
+      'userId': user.uid,
+      'systolic': systolic,
+      'diastolic': diastolic,
+      'pulse': pulse,
+      'note': note,
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+    setState(() { _isSaving = false; });
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Data saved successfully!'), backgroundColor: Colors.green),
+      );
+      Navigator.of(context).pop();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,17 +91,23 @@ class AddManualDataScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                // Date and Time Row
+                // Date and Time Row (auto, for now)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Text('June 18', style: TextStyle(fontSize: 15, color: Colors.black54)),
-                    SizedBox(width: 8),
-                    Text('|', style: TextStyle(fontSize: 15, color: Colors.black26)),
-                    SizedBox(width: 8),
-                    Text('09:31 AM', style: TextStyle(fontSize: 15, color: Colors.black54)),
-                    SizedBox(width: 8),
-                    Icon(Icons.keyboard_arrow_down, color: Color(0xFF21C17A)),
+                  children: [
+                    Text(
+                      '${DateTime.now().month}/${DateTime.now().day}',
+                      style: const TextStyle(fontSize: 15, color: Colors.black54),
+                    ),
+                    const SizedBox(width: 8),
+                    const Text('|', style: TextStyle(fontSize: 15, color: Colors.black26)),
+                    const SizedBox(width: 8),
+                    Text(
+                      TimeOfDay.now().format(context),
+                      style: const TextStyle(fontSize: 15, color: Colors.black54),
+                    ),
+                    const SizedBox(width: 8),
+                    const Icon(Icons.keyboard_arrow_down, color: Color(0xFF21C17A)),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -62,27 +121,21 @@ class AddManualDataScreen extends StatelessWidget {
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: const [
-                      _InputValueCard(
+                    children: [
+                      _InputValueField(
                         title: 'Systolic',
-                        value: '105',
+                        controller: _systolicController,
                         unit: 'mmHg',
-                        subValue: '105',
-                        highlight: true,
                       ),
-                      _InputValueCard(
+                      _InputValueField(
                         title: 'Diastolic',
-                        value: '74',
+                        controller: _diastolicController,
                         unit: 'mmHg',
-                        subValue: '75',
-                        highlight: true,
                       ),
-                      _InputValueCard(
+                      _InputValueField(
                         title: 'Pulse',
-                        value: '75',
+                        controller: _pulseController,
                         unit: 'BPM',
-                        subValue: '75',
-                        highlight: true,
                       ),
                     ],
                   ),
@@ -97,24 +150,19 @@ class AddManualDataScreen extends StatelessWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: const [
-                      TextField(
-                        maxLines: 3,
-                        maxLength: 100,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Add your note here',
-                          counterText: '',
-                        ),
-                      ),
-                      Text('0/100', style: TextStyle(fontSize: 12, color: Colors.grey)),
-                    ],
+                  child: TextField(
+                    controller: _noteController,
+                    maxLines: 3,
+                    maxLength: 100,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Add your note here',
+                      counterText: '',
+                    ),
                   ),
                 ),
                 const SizedBox(height: 24),
-                // Normal Info Card
+                // Normal Info Card (unchanged)
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
@@ -151,7 +199,7 @@ class AddManualDataScreen extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: _isSaving ? null : _saveData,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1856B6),
                       shape: RoundedRectangleBorder(
@@ -159,10 +207,12 @@ class AddManualDataScreen extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                    child: const Text(
-                      'Save',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
+                    child: _isSaving
+                        ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                        : const Text(
+                            'Save',
+                            style: TextStyle(fontSize: 18, color: Colors.white),
+                          ),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -175,19 +225,11 @@ class AddManualDataScreen extends StatelessWidget {
   }
 }
 
-class _InputValueCard extends StatelessWidget {
+class _InputValueField extends StatelessWidget {
   final String title;
-  final String value;
+  final TextEditingController controller;
   final String unit;
-  final String subValue;
-  final bool highlight;
-  const _InputValueCard({
-    required this.title,
-    required this.value,
-    required this.unit,
-    required this.subValue,
-    this.highlight = false,
-  });
+  const _InputValueField({required this.title, required this.controller, required this.unit});
 
   @override
   Widget build(BuildContext context) {
@@ -195,16 +237,18 @@ class _InputValueCard extends StatelessWidget {
       children: [
         Text(title, style: const TextStyle(fontSize: 15, color: Colors.black54)),
         const SizedBox(height: 4),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: highlight ? const Color(0xFF1856B6) : Colors.black,
+        SizedBox(
+          width: 60,
+          child: TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              isDense: true,
+              contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            ),
           ),
         ),
-        const SizedBox(height: 2),
-        Text(subValue, style: const TextStyle(fontSize: 15, color: Colors.black38)),
         const SizedBox(height: 2),
         Text(unit, style: const TextStyle(fontSize: 13, color: Colors.grey)),
       ],

@@ -2,6 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../health_info/health_info_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:chronocare_app/providers/auth_provider.dart' as my_auth;
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -58,7 +60,10 @@ class _SignupScreenState extends State<SignupScreen> {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
       // Optionally, update display name
       await FirebaseAuth.instance.currentUser?.updateDisplayName(fullName);
+      await FirebaseAuth.instance.currentUser?.reload();
+      final user = FirebaseAuth.instance.currentUser;
       if (mounted) {
+        Provider.of<my_auth.AuthProvider>(context, listen: false).setUser(user);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Registration successful!'), backgroundColor: Colors.green, duration: Duration(milliseconds: 1500)),
         );

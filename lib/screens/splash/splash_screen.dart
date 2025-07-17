@@ -24,49 +24,50 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A4DA2), // Deep blue
+      backgroundColor: const Color(0xFF0A4DA2),
       body: Stack(
         children: [
-          // Optional: Add background circles using Positioned widgets or a custom painter
+          // Subtle background circles
+          Positioned.fill(child: CustomPaint(painter: _SplashBgPainter())),
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Placeholder for logo
+                // Logo
                 Container(
                   width: 100,
                   height: 100,
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white24,
+                    color: Colors.white,
                   ),
                   child: Center(
-                    child: Icon(Icons.health_and_safety, size: 60, color: Color(0xFF1ED760)),
+                    child: Icon(Icons.waves, size: 60, color: Color(0xFF21C17A)),
                   ),
                 ),
-                const SizedBox(height: 24),
-                RichText(
-                  text: const TextSpan(
-                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, letterSpacing: 1),
-                    children: [
-                      TextSpan(text: 'Chrono', style: TextStyle(color: Color(0xFF1ED760))),
-                      TextSpan(text: 'Care', style: TextStyle(color: Color(0xFF0A4DA2))),
-                    ],
+                const SizedBox(height: 32),
+                const Text(
+                  'ChronoCare',
+                  style: TextStyle(
+                    color: Color(0xFF21C17A),
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
                   ),
                 ),
               ],
             ),
           ),
           Positioned(
-            bottom: 40,
+            bottom: 32,
             left: 0,
             right: 0,
             child: Center(
               child: Text(
                 'Loading...',
                 style: TextStyle(
-                  color: Color(0xFF1ED760),
-                  fontSize: 16,
+                  color: Color(0xFF21C17A),
+                  fontSize: 15,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -76,4 +77,21 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
     );
   }
+}
+
+class _SplashBgPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white.withOpacity(0.06)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+    final center = Offset(size.width / 2, size.height / 2);
+    for (double radius = size.width / 2.2; radius > 60; radius -= 60) {
+      canvas.drawCircle(center, radius, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 } 

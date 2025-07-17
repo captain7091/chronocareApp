@@ -4,12 +4,15 @@ import '../../widgets/blood_sugar_chart.dart';
 import '../../widgets/heart_rate_chart.dart';
 import '../../widgets/activity_chart.dart';
 import '../../widgets/bmi_chart.dart';
+import 'package:provider/provider.dart';
+import 'package:chronocare_app/providers/auth_provider.dart' as my_auth;
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final name = Provider.of<my_auth.AuthProvider>(context).displayName;
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       body: SafeArea(
@@ -49,12 +52,12 @@ class HomeScreen extends StatelessWidget {
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text('Mike Hussey', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                            SizedBox(height: 2),
-                            Text('Diabetic + Hypertensive', style: TextStyle(fontSize: 13, color: Colors.black54)),
-                            SizedBox(height: 2),
-                            Text('18 June, 2025  |  11:00 AM', style: TextStyle(fontSize: 12, color: Colors.black38)),
+                          children: [
+                            Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                            const SizedBox(height: 2),
+                            const Text('Diabetic + Hypertensive', style: TextStyle(fontSize: 13, color: Colors.black54)),
+                            const SizedBox(height: 2),
+                            const Text('18 June, 2025  |  11:00 AM', style: TextStyle(fontSize: 12, color: Colors.black38)),
                           ],
                         ),
                       ),

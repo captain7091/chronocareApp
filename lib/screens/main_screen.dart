@@ -4,6 +4,7 @@ import 'home/home_screen.dart';
 import 'chatbot_screen.dart';
 import 'medication_screen.dart';
 import 'tracker_screen.dart';
+import 'setting_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -20,15 +21,7 @@ class _MainScreenState extends State<MainScreen> {
     ChatbotScreen(),
     MedicationScreen(),
     TrackerScreen(),
-    // Setting Screen with Logout Button
-    Center(
-      child: ElevatedButton(
-        onPressed: () async {
-          await FirebaseAuth.instance.signOut();
-        },
-        child: const Text('Logout'),
-      ),
-    ),
+    SettingScreen(), // Show the new settings screen here
   ];
 
   @override
