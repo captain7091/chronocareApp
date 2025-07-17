@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:chronocare_app/screens/main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -26,8 +27,16 @@ class _LoginScreenState extends State<LoginScreen> {
     final password = _passwordController.text.trim();
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
-      // Login success: Navigate to home or main screen
-      Navigator.pushReplacementNamed(context, '/home'); // Change '/home' to your actual home route
+      // Login success: Show popup and navigate to home/main screen
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login successful!'), backgroundColor: Colors.green, duration: Duration(milliseconds: 1500)),
+        );
+        await Future.delayed(const Duration(milliseconds: 1500));
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const MainScreen()),
+        );
+      }
     } on FirebaseAuthException catch (e) {
       String message = 'Login failed';
       if (e.code == 'user-not-found') {

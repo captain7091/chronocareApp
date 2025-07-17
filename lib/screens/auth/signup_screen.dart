@@ -59,6 +59,10 @@ class _SignupScreenState extends State<SignupScreen> {
       // Optionally, update display name
       await FirebaseAuth.instance.currentUser?.updateDisplayName(fullName);
       if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registration successful!'), backgroundColor: Colors.green, duration: Duration(milliseconds: 1500)),
+        );
+        await Future.delayed(const Duration(milliseconds: 1500));
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (_) => const HealthInfoScreen(),

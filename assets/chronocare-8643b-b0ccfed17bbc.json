@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "chronocare-8643b",
+  "private_key_id": "b0ccfed17bbc7bd74d3073494184972b038c778d",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCcvfVPBzF6dKsU\nAzd8iJ7Zm30yu9p/CGun14osC6yExWJ9kgA7M2TDripT0px+rMZt9fKnsxQyaB+1\nrNKZCm+P3Jj3MBZvycIGGt9lDjrDwneUlvjT8t7pnkBfv5+gH5JsV11XipQWA+/G\nKRYwhbvDUffjZM8NYpnFQaVXDfJYtlgcAb/Ya27lcYvtPtafKWN0IgiziFL8X90o\n1sWiEWpv89NeoGU7kZTvOY9AuyltHr+Dw+2eLJggFIuK6vwG2COYwjmD+96YZjhX\nRoPMVzJSszu0c95Mq6dhr+GmqKrFISn28RxnjbXpRCoAPDFjdu98Uz6ZklWoHIeZ\npXughNrtAgMBAAECggEAHTlowceeUM3scOKJp6lEbt/IF9vBKSLNicGNBFnX3Hh9\n/NoqO1+Bd9+jCjZwUckOhUWQbPadeymBUgsLSBgTRXA0wA/h+w1T5PYBNXMR/1pk\nl9qPQdtcdxP3vjJ5BW6lixg98drHchRhUiHqfnkM0WXY0XfECCOcdpQfCwxxZVst\nPsL/BDCdXNxZAdqwxhXD73yCfbzbVpypYCHFIeOcIe1RjmXWd8RgZxPxZmLvan7k\n9KcVaGpPmZCpggJj+DQ4jZtl6BB0TFVYOv6fLZ4qtufkqwvjM1brfX7AL7IQz+aQ\nMYbav1emXYTRBUrtZxROCrcL8AXPkRVvX45YEkhoyQKBgQDZdi1wxqlTxpU+6wgL\n94RcW7iKBGia8l3GvZ1lQYBHMCukldOhMHVexar7irlVjKocVk2hMNy5CiCp4+MU\nhLIJanGxqEvHCIZIyZaMjxKl76ol6JL/+J3PM9FmW+to9dwikLxHmKWjZN2XlIZJ\nFjcdrQNbw/ZJXOE/4vYZnPwypQKBgQC4hQwRcyzv2lpjpDhxrA8kTj2NMpd/MMA+\n2OWvGHc+C0vvlR9QU3oGSpFZIa5CkglUaGPS+ghBw/OzrEKaXHsimfWi7qqvN44B\n3hvw+Ff9IB9Wm7I6NRuLYFF0VQ6xEs/ERuvEByfaGAUJLTiukTAFM3riRcSzYHBP\n5nVQ1On8qQKBgChm3Gpnfm4iJvhZklUm12CRaee6ifS/ssyJzgRR9xNCz9j0PS1l\nY2kIMIwraeOLDs/U+PdJrLh0OT1XKYlWXf2B2T24ltuTqd88FMxoiH5r2KDSZP1J\no4griGwMB+CoTQ3e9hwXMC77PnA7F/fcOME6s7UI42kd6HuGH1MC55hBAoGAVj6Z\nrW5QCqvco8YWO8tYKHgJfP2wodp/gOCQOo8M7QsKqyjgQgNCfb5MwYRkluj7Q2Cn\nh+0l/tdACTLyzoN7amjbzxQO42bsESNnm/H37nAdNbYAUASSo0qZx+4Zt9o7Elqz\nyCQwFFg1wlxIqg9iiovNXAWQMudYl3/4RZe+5kECgYEAghHzaxpxqIkBWKBSXuql\n1G8KqTxRUMXDl+W+mMVlveXydxMbnACy2jFbFks3rqEakqtxv6XTEnijOq2E1MuK\nel3vqG2awrO+pbL7WmgcNjQcQweH9PYS4x3bRQhQC1nJysZUkyq4i7OAniY16nvv\nYxmFil33JzjFUnoGhIeAuwQ=\n-----END PRIVATE KEY-----\n",
+  "client_email": "chronocare-app@chronocare-8643b.iam.gserviceaccount.com",
+  "client_id": "116617576733460071463",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/chronocare-app%40chronocare-8643b.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../main_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HealthInfoScreen extends StatefulWidget {
   const HealthInfoScreen({Key? key}) : super(key: key);
@@ -13,6 +15,8 @@ class _HealthInfoScreenState extends State<HealthInfoScreen> {
   final TextEditingController _ageController = TextEditingController();
   String? _selectedGender;
   List<String> _selectedConditions = [];
+  bool _isSaving = false;
+  String? _errorMessage;
 
   final List<String> _genders = ['Male', 'Female', 'Other'];
   final List<String> _conditions = [
@@ -120,19 +124,17 @@ class _HealthInfoScreenState extends State<HealthInfoScreen> {
               const SizedBox(height: 16),
               const Text('Known Conditions', style: TextStyle(fontWeight: FontWeight.w500)),
               const SizedBox(height: 8),
-              DropdownButtonFormField<List<String>>(
-                value: _selectedConditions.isEmpty ? null : _selectedConditions,
+              DropdownButtonFormField<String>(
+                value: _selectedConditions.isEmpty ? null : _selectedConditions.first,
                 items: _conditions
-                    .map((condition) => DropdownMenuItem<List<String>>(
-                          value: [condition],
+                    .map((condition) => DropdownMenuItem<String>(
+                          value: condition,
                           child: Text(condition),
                         ))
                     .toList(),
                 onChanged: (value) {
                   setState(() {
-                    if (value != null) {
-                      _selectedConditions = value;
-                    }
+                    _selectedConditions = value != null ? [value] : [];
                   });
                 },
                 isExpanded: true,
@@ -150,11 +152,48 @@ class _HealthInfoScreenState extends State<HealthInfoScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (_) => const MainScreen()),
-                      (route) => false,
-                    );
+                  onPressed: _isSaving ? null : () async {
+                    setState(() {
+                      _isSaving = true;
+                      _errorMessage = null;
+                    });
+                    try {
+                      final user = FirebaseAuth.instance.currentUser;
+                      if (user == null) {
+                        setState(() {
+                          _errorMessage = 'User not logged in.';
+                          _isSaving = false;
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('User not logged in.'), backgroundColor: Colors.red),
+                        );
+                        return;
+                      }
+                      await FirebaseFirestore.instance.collection('health_information').doc(user.uid).set({
+                        'healthInfo': _healthInfoController.text.trim(),
+                        'age': int.tryParse(_ageController.text.trim()),
+                        'gender': _selectedGender,
+                        'conditions': _selectedConditions,
+                        'updatedAt': FieldValue.serverTimestamp(),
+                      });
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Health information saved successfully!'), backgroundColor: Colors.green),
+                        );
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (_) => const MainScreen()),
+                          (route) => false,
+                        );
+                      }
+                    } catch (e) {
+                      setState(() {
+                        _errorMessage = 'Failed to save health information.';
+                        _isSaving = false;
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(_errorMessage ?? 'Failed to save health information.'), backgroundColor: Colors.red),
+                      );
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF0A4DA2),
@@ -163,9 +202,19 @@ class _HealthInfoScreenState extends State<HealthInfoScreen> {
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  child: const Text('Save & Update', style: TextStyle(fontSize: 18, color: Colors.white)),
+                  child: _isSaving
+                      ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                      : const Text('Save & Update', style: TextStyle(fontSize: 18, color: Colors.white)),
                 ),
               ),
+              if (_errorMessage != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    _errorMessage!,
+                    style: const TextStyle(color: Colors.red, fontSize: 14),
+                  ),
+                ),
               const SizedBox(height: 24),
             ],
           ),
