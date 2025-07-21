@@ -1,34 +1,24 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class ActivityChart extends StatelessWidget {
-  const ActivityChart({Key? key}) : super(key: key);
+  final List<double> steps;
+  final List<String> days;
+  const ActivityChart({Key? key, required this.steps, required this.days}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final List<double> steps = [4000, 5200, 800, 4100, 3000, 5000, 6000];
-    final List<String> days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    final int average = 2890;
-
+    final int average = steps.isNotEmpty ? (steps.reduce((a, b) => a + b) ~/ steps.length) : 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text('Activity', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
         const SizedBox(height: 8),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Icon(Icons.chevron_left, color: Colors.black54),
-            const Text('June 18 – June 24, 2025', style: TextStyle(fontWeight: FontWeight.w500)),
-            Icon(Icons.chevron_right, color: Colors.black54),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text('Average ', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18, color: Colors.black)),
-            Text('$average', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Color(0xFFFF7043))),
+            const Text('Average ', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18, color: Colors.black)),
+            Text('$average', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Color(0xFFFF7043))),
             const Text(' Steps', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16, color: Colors.black)),
           ],
         ),

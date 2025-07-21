@@ -1,28 +1,18 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class HeartRateChart extends StatelessWidget {
-  const HeartRateChart({Key? key}) : super(key: key);
+  final List<double> heartRates;
+  final List<String> days;
+  const HeartRateChart({Key? key, required this.heartRates, required this.days}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final List<double> heartRates = [85, 72, 80, 78, 90, 88, 84];
-    final List<String> days = ['16', '17', '18', '19', '20', '21', '22'];
-    final int highlightIndex = 1; // 17th, value 72
-
+    final int highlightIndex = 1;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Hart Rate (bpm)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Icon(Icons.chevron_left, color: Colors.black54),
-            const Text('June 18 – June 24, 2025', style: TextStyle(fontWeight: FontWeight.w500)),
-            Icon(Icons.chevron_right, color: Colors.black54),
-          ],
-        ),
+        const Text('Heart Rate (bpm)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
         const SizedBox(height: 8),
         SizedBox(
           height: 140,

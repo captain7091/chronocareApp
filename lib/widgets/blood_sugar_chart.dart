@@ -1,28 +1,18 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class BloodSugarChart extends StatelessWidget {
-  const BloodSugarChart({Key? key}) : super(key: key);
+  final List<double> sugarLevels;
+  final List<String> days;
+  const BloodSugarChart({Key? key, required this.sugarLevels, required this.days}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final List<double> sugarLevels = [130, 110, 90, 100, 140, 120, 135];
-    final List<String> days = ['16', '17', '18', '19', '20', '21', '22'];
-    final int highlightIndex = 1; // 17th, value 110
-
+    final int highlightIndex = 1;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text('Blood Sugar (mg/dl)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Icon(Icons.chevron_left, color: Colors.black54),
-            const Text('June 18 – June 24, 2025', style: TextStyle(fontWeight: FontWeight.w500)),
-            Icon(Icons.chevron_right, color: Colors.black54),
-          ],
-        ),
         const SizedBox(height: 8),
         SizedBox(
           height: 140,

@@ -1,28 +1,18 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class BloodPressureChart extends StatelessWidget {
-  const BloodPressureChart({Key? key}) : super(key: key);
+  final List<double> systolic;
+  final List<double> diastolic;
+  final List<String> days;
+  const BloodPressureChart({Key? key, required this.systolic, required this.diastolic, required this.days}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final List<double> systolic = [100, 116, 116, 99, 105, 101, 110];
-    final List<double> diastolic = [65, 65, 64, 60, 63, 68, 61];
-    final List<String> days = ['18', '19', '20', '21', '22', '23', '24'];
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text('Blood Pressure', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Icon(Icons.chevron_left, color: Colors.black54),
-            const Text('June 18 – June 24, 2025', style: TextStyle(fontWeight: FontWeight.w500)),
-            Icon(Icons.chevron_right, color: Colors.black54),
-          ],
-        ),
         const SizedBox(height: 8),
         SizedBox(
           height: 140,
