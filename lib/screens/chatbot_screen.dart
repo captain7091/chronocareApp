@@ -1,10 +1,14 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
+// Uncommented manual bot logic and removed API call
 final Map<String, String> botResponses = {
   // Greetings & Chitchat
   'hello': 'Hello! How can I help you today?',
   'hi': 'Hi there! How can I assist you?',
   'hey': 'Hey! How can I help you?',
+  'hy': 'Hey! How can I help you?', // Response now exactly matches 'hey'
   'how are you': 'I am just a bot, but I am here to help you!',
   'good morning': 'Good morning! How can I help you?',
   'good afternoon': 'Good afternoon! How can I help you?',
@@ -161,7 +165,8 @@ String getBotResponse(String userInput) {
       return entry.value;
     }
   }
-  return 'Sorry, I do not have information about that. Please ask about common diseases, medicines, or say hello!';
+  // Professional, difficult English default response
+  return 'Regrettably, I am unable to furnish a pertinent response to your query at this juncture. Kindly rephrase or consult a healthcare professional for further elucidation.';
 }
 
 class ChatbotScreen extends StatefulWidget {
@@ -174,16 +179,21 @@ class ChatbotScreen extends StatefulWidget {
 class _ChatbotScreenState extends State<ChatbotScreen> {
   final TextEditingController _controller = TextEditingController();
   final List<Map<String, String>> _messages = [];
+  bool _isLoading = false;
 
-  void _sendMessage() {
+  void _sendMessage() async {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
     setState(() {
       _messages.add({'sender': 'user', 'text': text});
-      String botReply = getBotResponse(text);
-      _messages.add({'sender': 'bot', 'text': botReply});
+      _isLoading = true;
     });
     _controller.clear();
+    String botReply = getBotResponse(text);
+    setState(() {
+      _messages.add({'sender': 'bot', 'text': botReply});
+      _isLoading = false;
+    });
   }
 
   @override
@@ -210,8 +220,26 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
             const SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
-                itemCount: _messages.length,
+                itemCount: _messages.length + (_isLoading ? 1 : 0),
                 itemBuilder: (context, index) {
+                  if (_isLoading && index == _messages.length) {
+                    return Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 4),
+                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFAEE9C7),
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                        child: const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                    );
+                  }
                   final msg = _messages[index];
                   final isUser = msg['sender'] == 'user';
                   return Align(
